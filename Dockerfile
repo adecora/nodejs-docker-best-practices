@@ -3,6 +3,9 @@ RUN apk add dumb-init
 ENV NODE_ENV production
 WORKDIR /usr/src/app
 COPY --chown=node:node . /usr/src/app
-RUN npm ci --only=production
+ARG NPM_TOKEN
+RUN echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc && \
+   npm ci --only=production; \
+   rm -rf .npmrc
 USER node
 CMD ["dumb-init", "node", "server.js"]
